@@ -1,0 +1,102 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "raumlot"
+version = "0.1.0"
+description = "Point clouds to parametric, ArchiCAD-ready IFC models."
+readme = "README.md"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+  "numpy>=1.26",
+  "scipy",
+  "pydantic>=2",
+  "PyYAML",
+  "xxhash",
+  "psutil",
+  "Pillow",
+  "laspy",
+  "lazrs",
+  "pye57",
+  "shapely",
+  "ifcopenshell",
+  "ifctester",
+  "ezdxf",
+  "httpx",
+  "python-dotenv",
+  "keyring",
+  "opencv-python",
+]
+
+[project.optional-dependencies]
+intake = [
+  "torch>=2.11,<2.12",
+  "torchvision>=0.26,<0.27",
+  "triton-windows>=3.6.0.post26; sys_platform == 'win32'",
+  "sam3",
+  "einops>=0.8.2",
+  "pycocotools>=2.0.11",
+  "timm>=1.0.30",
+  "iopath>=0.1.10",
+  "ftfy>=6.1.1",
+  "regex>=2026.9.29",
+  "huggingface_hub>=2.2.0",
+  "decord>=0.6.0",
+  "safetensors>=0.8.0",
+  "tqdm>=4.70.1",
+]
+geometry = ["open3d"]
+ui = ["PySide6"]
+
+[project.scripts]
+raumlot = "raumlot.cli.main:main"
+
+[dependency-groups]
+dev = [
+  "ruff",
+  "mypy",
+  "pytest",
+  "nox",
+  "maturin>=1.16",
+  "types-PyYAML",
+]
+
+[tool.uv.sources]
+torch = { index = "pytorch-cu128" }
+torchvision = { index = "pytorch-cu128" }
+sam3 = { git = "https://github.com/facebookresearch/sam3.git", rev = "0570b3a5be9c4e694f23d85232fb55f4a6f1f7fc" }
+
+[[tool.uv.index]]
+name = "pytorch-cu128"
+url = "https://download.pytorch.org/whl/cu128"
+explicit = true
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/raumlot"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+files = ["src/raumlot"]
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+addopts = "-ra"
+cache_dir = ".cache/pytest"
+markers = [
+  "gpu: requires CUDA and SAM weights",
+  "realdata: requires RAUMLOT_TESTDATA",
+  "network: requires a network-backed AI service",
+  "native: requires the Rust extension built by the native nox session",
+  "slow: takes materially longer than the default test tier",
+]

@@ -1,0 +1,16 @@
+/models/
+/test_PW/
+.env
+/.codex-tools/
+/graphify-out/
+/.venv/
+/.cache/
+__pycache__/
+*.egg-info/
+/dist/
+/build/
+/native/target/
+_codex_brief*.md
+/projects/
+/.cargo-cache/
+/.uv-cache/
